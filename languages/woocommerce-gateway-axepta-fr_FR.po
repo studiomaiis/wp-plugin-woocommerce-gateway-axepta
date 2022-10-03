@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Woocommerce Axepta Gateway\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-18 20:53+0000\n"
-"PO-Revision-Date: 2022-10-01 12:59+0000\n"
+"PO-Revision-Date: 2022-10-03 15:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: Français\n"
 "Language: fr_FR\n"
@@ -16,19 +16,25 @@ msgstr ""
 "X-Domain: woocommerce-gateway-axepta"
 
 #. 1. Plugin name
-#: includes/class-wc-gateway-axepta.php:101
+#: includes/class-wc-gateway-axepta.php:118
 #, php-format
 msgid "%1$s does not support your store's currency."
 msgstr "%1$s ne supporte pas la devise de votre boutique."
 
 #. 1. Plugin name
-#: includes/class-wc-gateway-axepta.php:115
+#: includes/class-wc-gateway-axepta.php:134
+#, php-format
+msgid "%1$s does not support your store's language."
+msgstr "%1$s ne supporte pas la langue de votre boutique."
+
+#. 1. Plugin name
+#: includes/class-wc-gateway-axepta.php:150
 #, php-format
 msgid "%1$s is not configured."
 msgstr "%1$s n'est pas configuré."
 
 #. 1. Plugin name 2. URL link.
-#: woocommerce-gateway-axepta.php:193
+#: woocommerce-gateway-axepta.php:209
 #, php-format
 msgid ""
 "%1$s requires WooCommerce to be installed and active. You can download %2$s "
@@ -38,23 +44,37 @@ msgstr ""
 "Téléchargement %2$s ici."
 
 #. Description of the plugin
-#: includes/class-wc-gateway-axepta.php:25
+#: includes/class-wc-gateway-axepta.php:31
 msgid "Accept card payments on your store using Axepta's gateway."
 msgstr ""
 "Accepter les paiements par carte en utilisant la passerelle de paiement "
 "Axepta."
 
-#: includes/class-wc-gateway-axepta.php:153
+#: includes/class-wc-gateway-axepta.php:30
+msgid "Axepta"
+msgstr "Axepta"
+
+#: includes/class-wc-gateway-axepta.php:221
+#: includes/class-wc-gateway-axepta.php:235
+msgid "Blowfish encryption key"
+msgstr "Clé de chiffrement Blowfish"
+
+#: includes/class-wc-gateway-axepta.php:189
 msgid "Enable Axepta"
 msgstr "Activer Axepta"
 
-#: includes/class-wc-gateway-axepta.php:174
+#: includes/class-wc-gateway-axepta.php:210
 msgid "Enable test mode"
 msgstr "Activer le mode de test"
 
-#: includes/class-wc-gateway-axepta.php:172
+#: includes/class-wc-gateway-axepta.php:208
 msgid "Enable/Disable test mode"
 msgstr "Activer/Désactiver le mode de test"
+
+#: includes/class-wc-gateway-axepta.php:217
+#: includes/class-wc-gateway-axepta.php:230
+msgid "HMAC key"
+msgstr "Clé HMAC"
 
 #. URI of the plugin
 msgid "https://github.com/studiomaiis/wp-plugin-woocommerce-gateway-axepta"
@@ -65,7 +85,7 @@ msgid "https://www.studiomaiis.net"
 msgstr "https://www.studiomaiis.net"
 
 #. 1. Plugin name
-#: includes/class-wc-gateway-axepta.php:206
+#: includes/class-wc-gateway-axepta.php:245
 #, php-format
 #| msgid ""
 #| "Log %1$s events, such as server requests (see WooCommerce > Logs). Note: "
@@ -82,27 +102,23 @@ msgstr ""
 "uniquement à des fins de débogage et de supprimer les journaux lorsque vous "
 "avez terminé."
 
-#: includes/class-wc-gateway-axepta.php:24
-msgid "Axepta"
-msgstr "Axepta"
-
-#: includes/class-wc-gateway-axepta.php:177
-#: includes/class-wc-gateway-axepta.php:189
+#: includes/class-wc-gateway-axepta.php:213
+#: includes/class-wc-gateway-axepta.php:225
 msgid "Merchant ID"
 msgstr "Merchant ID"
 
 #. 1. Response Code
-#: includes/class-wc-gateway-axepta.php:338
+#: includes/class-wc-gateway-axepta.php:390
 #, php-format
 msgid "Payment attempt failed - Response Code: %1$s"
 msgstr "Tentative de paiement - Response Code: %1$s"
 
-#: includes/class-wc-gateway-axepta.php:168
+#: includes/class-wc-gateway-axepta.php:204
 msgid "Payment button"
 msgstr "Bouton de paiement"
 
 #. 1. Auth ID
-#: includes/class-wc-gateway-axepta.php:331
+#: includes/class-wc-gateway-axepta.php:383
 #, php-format
 msgid "Payment was captured - Auth ID: %1$s"
 msgstr "Paiement réussi - Auth ID: %1$s"
@@ -111,35 +127,29 @@ msgstr "Paiement réussi - Auth ID: %1$s"
 msgid "Pierre BASSON"
 msgstr "Pierre BASSON"
 
-#: includes/class-wc-gateway-axepta.php:181
-#: includes/class-wc-gateway-axepta.php:193
-msgid "Secret key"
-msgstr "Clé secrète"
-
-#: includes/class-wc-gateway-axepta.php:185
-#: includes/class-wc-gateway-axepta.php:197
-msgid "Secret key version"
-msgstr "Version de la clé secrète"
-
-#: includes/class-wc-gateway-axepta.php:37
+#: includes/class-wc-gateway-axepta.php:43
 msgid "Secure payment by card"
 msgstr "Paiement sécurisé par carte bancaire"
 
-#: includes/class-wc-gateway-axepta.php:189
-#: includes/class-wc-gateway-axepta.php:193
-#: includes/class-wc-gateway-axepta.php:197
+#: includes/class-wc-gateway-axepta.php:225
+#: includes/class-wc-gateway-axepta.php:230
+#: includes/class-wc-gateway-axepta.php:235
 msgid "TEST "
 msgstr "TEST "
 
-#: includes/class-wc-gateway-axepta.php:304
+#: includes/class-wc-gateway-axepta.php:338
 msgid "Thank you for your order, your payment was successful."
 msgstr "Merci pour votre commande, votre paiement a bien été enregistré."
 
 #. Name of the plugin
-#: woocommerce-gateway-axepta.php:32
+#: woocommerce-gateway-axepta.php:34
 msgid "WooCommerce Axepta Gateway"
 msgstr "WooCommerce Axepta Gateway"
 
-#: includes/class-wc-gateway-axepta.php:307
+#: includes/class-wc-gateway-axepta.php:347
+msgid "Your payment was not successful."
+msgstr "Votre paiement n'a pas abouti."
+
+#: includes/class-wc-gateway-axepta.php:341
 msgid "Your payment was not successful. Please try again."
 msgstr "Votre paiement n'a pas abouti. Veuillez essayer de nouveau."

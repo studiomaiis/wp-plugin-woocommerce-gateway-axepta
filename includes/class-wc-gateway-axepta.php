@@ -284,12 +284,12 @@ class WC_Gateway_Axepta extends WC_Payment_Gateway {
 		
 		try {
 
-			$timestamp = time();
-			$transaction_reference = $order_id . $timestamp;
 			$amount = $order->get_total();
+			$key = $order->get_order_key();
 			$currency = get_woocommerce_currency();
 			$notify_url = $woocommerce->api_request_url( strtolower( __CLASS__ ) );
-			$return_url = home_url( 'axepta/return/' . $order_id . '/' . $order->get_order_key() . '/' );
+			$return_url = $this->get_return_url( $order );
+			$return_url = str_replace("/$order_id/?key=$key", "/axepta:$order_id:$key/", $return_url);
 			$language = $this->get_language();
 			
 			if ( $this->test_mode ) {
@@ -303,7 +303,7 @@ class WC_Gateway_Axepta extends WC_Payment_Gateway {
 			}
 			
 			$this->axepta_payssl->set_transaction_id( $order_id );
-			$this->axepta_payssl->set_reference_number( $transaction_reference );
+			$this->axepta_payssl->set_reference_number( $key );
 			$this->axepta_payssl->set_amount( $amount );
 			$this->axepta_payssl->set_currency( $currency );
 			$this->axepta_payssl->set_url_back( $return_url );
@@ -333,6 +333,75 @@ class WC_Gateway_Axepta extends WC_Payment_Gateway {
 		}
 	}
 	
+
+	public function check_response() {
+		
+		try {
+			
+			if ( $this->test_mode ) {
+				$this->axepta_payssl->set_merchant_id( $this->test_merchant_id );
+				$this->axepta_payssl->set_blowfish_key( $this->test_blowfish_key );
+				$this->axepta_payssl->set_hmac_key( $this->test_hmac_key );
+			} else {
+				$this->axepta_payssl->set_merchant_id( $this->merchant_id );
+				$this->axepta_payssl->set_blowfish_key( $this->blowfish_key );
+				$this->axepta_payssl->set_hmac_key( $this->hmac_key );
+			}
+			
+			$http_request = wp_unslash( $_POST );
+			$this->axepta_payssl->process_response( $http_request );
+			
+			if ( $this->axepta_payssl->response_is_valid() ) {
+				
+				$order_id = $this->mercanet_paypage_post->get_response_parameter( 'TransID' );
+				$order = wc_get_order( $order_id );
+
+				if ( $order ) {
+
+					if ( $this->axepta_payssl->response_is_successful() ) {
+						
+						$pay_id = $this->axepta_payssl->get_response_parameter( 'PayID' );
+						$xid = $this->axepta_payssl->get_response_parameter( 'XID' );
+
+						/* translators: 1. Pay ID 2. XID */
+						$order->add_order_note( sprintf( __( 'Payment was captured - Pay ID: %1$s - XID: %2$s', 'woocommerce-gateway-axepta' ), $pay_id, $xid ) );
+						$order->payment_complete();
+						global $woocommerce;
+						$woocommerce->cart->empty_cart();
+						$this->log( 'Axepta_PaySSL response is successful - order_id=' . $order_id . ' - parameters = ' . wc_print_r( $this->axepta_payssl->get_response_parameters(), true ) );
+
+					} else {
+
+						$code = $this->axepta_payssl->get_response_parameter( 'Code' );
+						$description = $this->axepta_payssl->get_response_parameter( 'Description' );
+						
+						/* translators: 1. Response code 2. Response description */
+						$order->add_order_note( sprintf( __( 'Payment attempt failed - Response code: %1$s - Description: %2$s', 'woocommerce-gateway-axepta' ), $code, $description ) );
+						$this->log( 'Axepta_PaySSL response is NOT successful - order_id=' . $order_id . ' - parameters = ' . wc_print_r( $this->axepta_payssl->get_response_parameters(), true ) );
+
+					}
+					
+				} else {
+					
+					throw new Exception( 'Axepta_PaySSL response : order not found - parameters = ' . wc_print_r( $this->axepta_payssl->get_response_parameters(), true ) );
+					
+				}
+				
+			} else {
+				
+				throw new Exception( 'Axepta_PaySSL response is NOT valid - $_REQUEST = ' . wc_print_r( $_REQUEST, true ) );
+				
+			}
+			
+		} catch ( Exception $e ) {
+			
+			$this->log( $e->getMessage(), 'error' );
+			
+		}
+		
+	}
+
+
 	public function order_received_text( $text, $order ) {
 		if ( $order && $this->id === $order->get_payment_method() && $order->is_paid() ) {
 			return esc_html__( "Thank you for your order, your payment was successful.", 'woocommerce-gateway-axepta' );
@@ -348,47 +417,7 @@ class WC_Gateway_Axepta extends WC_Payment_Gateway {
 		}
 		return $text;
 	}
-
-	public function check_response() {
-		try {
-			
-			$this->axepta_payssl->set_secret_key( $this->secret_key );
-			$posted = wp_unslash( $_POST );
-			$this->axepta_payssl->set_response( $posted );
-			
 	
-			if ( $this->axepta_payssl->response_is_valid() ) {
-				
-				$order_id = $this->axepta_payssl->get_response_parameter( 'orderId' );
-				$reponse_code = $this->axepta_payssl->get_response_parameter( 'responseCode' );
-				$order = wc_get_order( $order_id );
-
-				if ( $this->axepta_payssl->response_is_successful() ) {
-					$authorisation_id = $this->axepta_payssl->get_response_parameter( 'authorisationId' );
-					/* translators: 1. Auth ID */
-					$order->add_order_note( sprintf( __( 'Payment was captured - Auth ID: %1$s', 'woocommerce-gateway-axepta' ), $reponse_code, $authorisation_id ) );
-					$order->payment_complete();
-					global $woocommerce;
-					$woocommerce->cart->empty_cart();
-					$this->log( 'Axepta_Paypage_POST response is successful order_id=' . $order_id . ' $_POST=' . wc_print_r( $_POST, true ) );
-				} else {
-					/* translators: 1. Response Code */
-					$order->add_order_note( sprintf( __( 'Payment attempt failed - Response Code: %1$s', 'woocommerce-gateway-axepta' ), $reponse_code ) );
-					$this->log( 'Axepta_Paypage_POST response is NOT successful order_id=' . $order_id . ' $_POST=' . wc_print_r( $_POST, true ) );
-				}
-				
-			} else {
-				
-				$this->log( 'Axepta_Paypage_POST response is NOT valid order_id=' . $order_id . ' $_POST=' . wc_print_r( $_POST, true ), 'error' );
-				
-			}
-			
-		} catch ( Exception $e ) {
-			
-			$this->log( $e->getMessage(), 'error' );
-			
-		}
-	}
 
 }
 

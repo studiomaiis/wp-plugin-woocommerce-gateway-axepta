@@ -66,7 +66,7 @@ class Axepta_PaySSL {
 	private $hmac_signature = '';
 	
 	private $blowfish_parameters = array();
-	private $blowfish_mandatory_parameters = array( 
+	private $blowfish_mandatory_request_parameters = array( 
 		'MsgVer',
 		'TransID',
 		'Amount',
@@ -80,13 +80,20 @@ class Axepta_PaySSL {
 		'UserData',
 		'Response',
 	);
+	private $blowfish_mandatory_response_parameters = array( 
+		'PayID',
+		'TransID',
+		'mid',
+		'Status',
+		'Code',
+	);
 	private $blowfish_data = '';
 	private $blowfish_length = '';
 	
 	// private $response_data = '';
 	// private $response_seal = '';
-	// private $response_parameters = array();
 	
+	private $response_parameters = array();
 	private $response_is_valid = false;
 	private $response_code = '';
 	private $response_is_successful = false;
@@ -142,7 +149,7 @@ class Axepta_PaySSL {
 
 	public function set_amount( $amount ) {
 		$this->amount = $amount;
-		$this->amount_in_cents = intval( $amount * 100 );
+		$this->amount_in_cents = intval( floatval( $amount ) * 100 );
 		$this->blowfish_parameters[ 'Amount' ] = $this->amount_in_cents;
 	}
 
@@ -194,7 +201,7 @@ class Axepta_PaySSL {
 		if ( empty( $this->amount ) ) throw new Exception( "amount missing" );
 		if ( empty( $this->currency ) ) throw new Exception( "currency missing" );
 
-		$this->generate_hmac_signature( '', $this->transaction_id, $this->merchant_id, $this->amount, $this->currency );
+		$this->generate_hmac_signature( '', $this->transaction_id, $this->merchant_id, $this->amount_in_cents, $this->currency );
 		$this->generate_blowfish_data();
 		$this->generate_form_action();
 	}
@@ -202,10 +209,10 @@ class Axepta_PaySSL {
 
 	public function generate_hmac_signature( ...$parameters ) {
 		$sha_string = join( '*', $parameters );
-	
+
 		if ( empty( $this->hmac_key ) ) throw new Exception( "hmac_key missing" );
-	
-		$this->hmac_signature = hash_hmac( 'sha256', $sha_string, $this->hmac_key );
+		
+		$this->hmac_signature = strtoupper( hash_hmac( 'sha256', $sha_string, $this->hmac_key ) );
 	}
 
 
@@ -215,7 +222,7 @@ class Axepta_PaySSL {
 		$this->blowfish_parameters[ 'MsgVer' ] = $this->message_version;
 		$this->blowfish_parameters[ 'Response' ] = $this->response;
 		
-		foreach ( $this->blowfish_mandatory_parameters as $key) {
+		foreach ( $this->blowfish_mandatory_request_parameters as $key) {
 			if ( ! isset( $this->blowfish_parameters[ $key ] ) ) throw new Exception( "$key missing" );
 		}
 		foreach ( $this->blowfish_parameters as $key => $value ) {
@@ -276,7 +283,7 @@ class Axepta_PaySSL {
 	}
 
 
-	public static function blowfish_decrypt(string $data, string $key) {
+	private function blowfish_decrypt(string $data, string $key) {
 		$l = strlen($key);
 		if ($l < 16) {
 			$key = str_repeat($key, (int) ceil(16 / $l));
@@ -289,7 +296,49 @@ class Axepta_PaySSL {
 
 
 	public function process_response( $http_request ) {
+		
+		$hmac_parameters = array();
+		
+		$data = $http_request[ 'Data' ];
+		$length = $http_request[ 'Len' ];
+		
+		$plain_text = $this->blowfish_decrypt( (string) hex2bin( $data ), $this->blowfish_key );
 
+		$a = explode( '&', $plain_text );
+		
+		if ( is_array( $a ) and count( $a ) ) {
+			foreach ( $a as $string ) {
+				if ( preg_match( '/=/', $string ) ) {
+					list( $key, $value ) = explode( '=', $string, 2 );
+					if ( $key == 'MIB' ) $key = 'mib';
+					$this->response_parameters[ $key ] = (string) $value;
+					if ( in_array( $key, $this->blowfish_mandatory_response_parameters ) ) {
+						$hmac_parameters[ $key ] = (string) $value;
+					}
+				}
+			}
+		}
+		
+		foreach ( $this->blowfish_mandatory_response_parameters as $key ) {
+			if ( ! isset( $hmac_parameters[ $key ] ) ) {
+				throw new Exception( "$key missing " . print_r( $hmac_parameters, true ) . print_r( $this->blowfish_mandatory_response_parameters, true ) . print_r( $this->response_parameters, true ) );
+			}
+		}
+		
+		if ( ! isset( $this->response_parameters[ 'MAC' ] ) and empty( $this->response_parameters[ 'MAC' ] ) ) {
+			throw new Exception( "MAC missing" );
+		}
+		
+		$this->generate_hmac_signature( $hmac_parameters[ 'PayID' ], $hmac_parameters[ 'TransID' ], $hmac_parameters[ 'mid' ], $hmac_parameters[ 'Status' ], $hmac_parameters[ 'Code' ] );
+		
+		if ( $this->hmac_signature != $this->response_parameters[ 'MAC' ] ) {
+			throw new Exception( 'Wrong MAC signature '.$this->hmac_signature.' ?= '.$this->response_parameters[ 'MAC' ] . ' hmac_parameters = ' . print_r( $hmac_parameters, true ));
+			$this->response_is_valid = false;
+		}
+		
+		$this->response_is_valid = true;
+		
+		$this->response_is_successful = ($this->response_parameters[ 'Code' ] === '00000000');
 	}
 
 	
@@ -302,11 +351,21 @@ class Axepta_PaySSL {
 		}
 		return $this->response_parameters[ $key ];
 	}
-	
+
+
+	public function get_response_parameters() {
+		if ( empty( $this->response_parameters ) ) {
+			throw new Exception( "Response parameters empty" );
+		}
+		return $this->response_parameters;
+	}
+
+
 	public function response_is_valid() {
 		return $this->response_is_valid;
 	}
-	
+
+
 	public function response_is_successful() {
 		if ( ! $this->response_is_valid ) {
 			throw new Exception( "Response is not valid, cannot call response_is_successful()" );

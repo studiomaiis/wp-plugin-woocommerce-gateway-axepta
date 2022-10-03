@@ -210,20 +210,18 @@ function woocommerce_axepta_missing_wc_notice() {
 }
 
 
-add_action( 'init', 'woocommerce_axepta_add_rewrite_rule' );
 add_action( 'parse_request', 'woocommerce_axepta_parse_request' );
 
-function woocommerce_axepta_add_rewrite_rule() {
-	add_rewrite_rule('^axepta/return/(.+)/(.+)/(.+)$', 'index.php$matches[3]&axepta=return&order_id=$matches[1]&key=$matches[2]', 'top');
-}
 
 function woocommerce_axepta_parse_request( &$wp ) {
 	if ( isset( $wp->query_vars[ 'pagename' ] ) ) {
-		if ( preg_match( '/^axepta\/return\/(.*)\/(.*)$/', $wp->query_vars[ 'pagename' ], $matches ) ) {
-			$order_received_url = wc_get_endpoint_url( 'order-received', $matches[ 1 ], wc_get_checkout_url() );
-			$order_received_url = add_query_arg( 'key', $matches[ 2 ], $order_received_url );
-			wp_redirect( $order_received_url );
-			exit;
+		if ( isset( $wp->query_vars[ 'order-received' ] ) ) {
+			if ( preg_match( '/^axepta:([^:]+):([^:]+)$/', $wp->query_vars[ 'order-received' ], $matches ) ) {
+				$order_received_url = wc_get_endpoint_url( 'order-received', $matches[ 1 ], wc_get_checkout_url() );
+				$order_received_url = add_query_arg( 'key', $matches[ 2 ], $order_received_url );
+				wp_redirect( $order_received_url );
+				exit;
+			}
 		}
 	}
 }
