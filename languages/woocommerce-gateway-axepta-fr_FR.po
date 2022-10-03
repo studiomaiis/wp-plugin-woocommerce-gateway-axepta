@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Woocommerce Axepta Gateway\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-18 20:53+0000\n"
-"PO-Revision-Date: 2022-10-03 15:27+0000\n"
+"PO-Revision-Date: 2022-10-03 20:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Français\n"
 "Language: fr_FR\n"
@@ -107,21 +107,32 @@ msgstr ""
 msgid "Merchant ID"
 msgstr "Merchant ID"
 
-#. 1. Response Code
-#: includes/class-wc-gateway-axepta.php:390
-#, php-format
-msgid "Payment attempt failed - Response Code: %1$s"
-msgstr "Tentative de paiement - Response Code: %1$s"
+#. 1. Response code 2. Response description
+#: includes/class-wc-gateway-axepta.php:379
+#, fuzzy, php-format
+#| msgid "Payment attempt failed - Response code: %1$s - Description: %2$s"
+msgid "Payment attempt failed\\nResponse code: %1$s\\nDescription: %2$s"
+msgstr ""
+"Tentative de paiement\n"
+"Code de la réponse : %1$s\n"
+"Description : %2$s"
 
 #: includes/class-wc-gateway-axepta.php:204
 msgid "Payment button"
 msgstr "Bouton de paiement"
 
-#. 1. Auth ID
-#: includes/class-wc-gateway-axepta.php:383
-#, php-format
-msgid "Payment was captured - Auth ID: %1$s"
-msgstr "Paiement réussi - Auth ID: %1$s"
+#. 1. Pay ID 2. XID
+#: includes/class-wc-gateway-axepta.php:367
+#, fuzzy, php-format
+#| msgid "Payment was captured - Pay ID: %1$s - XID: %2$s"
+msgid ""
+"Payment was captured\n"
+"Pay ID: %1$s\n"
+"XID: %2$s"
+msgstr ""
+"Paiement validé\n"
+"Pay ID : %1$s\n"
+"XID : %2$s"
 
 #. Author of the plugin
 msgid "Pierre BASSON"
@@ -137,7 +148,7 @@ msgstr "Paiement sécurisé par carte bancaire"
 msgid "TEST "
 msgstr "TEST "
 
-#: includes/class-wc-gateway-axepta.php:338
+#: includes/class-wc-gateway-axepta.php:407
 msgid "Thank you for your order, your payment was successful."
 msgstr "Merci pour votre commande, votre paiement a bien été enregistré."
 
@@ -146,10 +157,10 @@ msgstr "Merci pour votre commande, votre paiement a bien été enregistré."
 msgid "WooCommerce Axepta Gateway"
 msgstr "WooCommerce Axepta Gateway"
 
-#: includes/class-wc-gateway-axepta.php:347
+#: includes/class-wc-gateway-axepta.php:416
 msgid "Your payment was not successful."
 msgstr "Votre paiement n'a pas abouti."
 
-#: includes/class-wc-gateway-axepta.php:341
+#: includes/class-wc-gateway-axepta.php:410
 msgid "Your payment was not successful. Please try again."
 msgstr "Votre paiement n'a pas abouti. Veuillez essayer de nouveau."

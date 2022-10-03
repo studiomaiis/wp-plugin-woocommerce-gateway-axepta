@@ -364,7 +364,7 @@ class WC_Gateway_Axepta extends WC_Payment_Gateway {
 						$xid = $this->axepta_payssl->get_response_parameter( 'XID' );
 
 						/* translators: 1. Pay ID 2. XID */
-						$order->add_order_note( sprintf( __( 'Payment was captured - Pay ID: %1$s - XID: %2$s', 'woocommerce-gateway-axepta' ), $pay_id, $xid ) );
+						$order->add_order_note( sprintf( __( "Payment was captured\nPay ID: %1\$s\nXID: %2\$s", 'woocommerce-gateway-axepta' ), $pay_id, $xid ) );
 						$order->payment_complete();
 						global $woocommerce;
 						$woocommerce->cart->empty_cart();
@@ -376,7 +376,7 @@ class WC_Gateway_Axepta extends WC_Payment_Gateway {
 						$description = $this->axepta_payssl->get_response_parameter( 'Description' );
 						
 						/* translators: 1. Response code 2. Response description */
-						$order->add_order_note( sprintf( __( 'Payment attempt failed - Response code: %1$s - Description: %2$s', 'woocommerce-gateway-axepta' ), $code, $description ) );
+						$order->add_order_note( sprintf( __( 'Payment attempt failed\nResponse code: %1$s\nDescription: %2$s', 'woocommerce-gateway-axepta' ), $code, $description ) );
 						$this->log( 'Axepta_PaySSL response is NOT successful - order_id=' . $order_id . ' - parameters = ' . wc_print_r( $this->axepta_payssl->get_response_parameters(), true ) );
 
 					}
