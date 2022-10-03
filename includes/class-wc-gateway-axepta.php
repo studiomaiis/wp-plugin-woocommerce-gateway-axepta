@@ -353,7 +353,7 @@ class WC_Gateway_Axepta extends WC_Payment_Gateway {
 			
 			if ( $this->axepta_payssl->response_is_valid() ) {
 				
-				$order_id = $this->mercanet_paypage_post->get_response_parameter( 'TransID' );
+				$order_id = $this->axepta_payssl->get_response_parameter( 'TransID' );
 				$order = wc_get_order( $order_id );
 
 				if ( $order ) {

@@ -331,8 +331,8 @@ class Axepta_PaySSL {
 		
 		$this->generate_hmac_signature( $hmac_parameters[ 'PayID' ], $hmac_parameters[ 'TransID' ], $hmac_parameters[ 'mid' ], $hmac_parameters[ 'Status' ], $hmac_parameters[ 'Code' ] );
 		
-		if ( $this->hmac_signature != $this->response_parameters[ 'MAC' ] ) {
-			throw new Exception( 'Wrong MAC signature '.$this->hmac_signature.' ?= '.$this->response_parameters[ 'MAC' ] . ' hmac_parameters = ' . print_r( $hmac_parameters, true ));
+		if ( strcmp( $this->hmac_signature, trim( $this->response_parameters[ 'MAC' ] ) ) != 0 ) {
+			throw new Exception( 'Wrong MAC signature' );
 			$this->response_is_valid = false;
 		}
 		
