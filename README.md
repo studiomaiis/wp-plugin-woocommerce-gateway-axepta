@@ -15,7 +15,7 @@ Il se peut que le plugin fonctionne sur des versions antérieures de PHP, WordPr
 ## Installation & mises à jour
 
 La première installation est manuelle. [Téléchargez l'archive ici](https://depot.studiomaiis.net/wordpress/woocommerce-gateway-axepta.zip) et installez le plugin de manière standard :
-* via FTP une fois l'archive décompressée dans `wp-content/plugins/` de votre installation WordPress,
+* via FTP une fois l'archive décompressée dans `wp-content/plugins/`,
 * ou via la page d'administration des extensions.
 
 Si vous téléchargez le code depuis Github, renommer le répertoire `wp-plugin-woocommerce-gateway-axepta(*)` en `woocommerce-gateway-axepta`.
