@@ -48,6 +48,8 @@ Oui, les réglages de ces 2 modes sont stockés en base et le passage de l'un à
 
 Si vous avez le MerchantID (ou MID dans la doc), la clé HMAC et la clé de chiffrement Blowfish, vous avez tout ce qu'il vous faut et vous n'aurez aucun mal à les saisir aux endroits réservés !
 
+![Configuration de la passerelle Axepta dans WooCommerce](https://depot.studiomaiis.net/screenshots/woo_axepta_config.png "Configuration de la passerelle Axepta dans WooCommerce")
+
 Veuillez vous référer à la [documentation officielle](https://docs.axepta.bnpparibas/display/DOCBNP/Premiers+pas+avec+AXEPTA+BNP+Paribas) pour récupérer vos identifiants.
 
 Attention à ne pas utiliser les tickets Github pour des demandes de support.
