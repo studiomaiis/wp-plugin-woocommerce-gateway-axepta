@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce Axepta Gateway
  * Description: Accept card payments on your store using Axepta's gateway.
  * Plugin URI: https://github.com/studiomaiis/wp-plugin-woocommerce-gateway-axepta
- * Version: 0.2
+ * Version: 0.3
  * Requires at least: 5.6.8
  * Tested up to: 6.0.2
  * Requires PHP: 7.3
