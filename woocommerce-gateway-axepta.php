@@ -5,8 +5,8 @@
  * Description: Accept card payments on your store using Axepta's gateway.
  * Plugin URI: https://github.com/studiomaiis/wp-plugin-woocommerce-gateway-axepta
  * Version: 0.2
- * Requires at least: 5.6
- * Tested up to: 6.0
+ * Requires at least: 5.6.8
+ * Tested up to: 6.0.2
  * Requires PHP: 7.3
  * Author: Pierre BASSON
  * Author URI: https://www.studiomaiis.net
