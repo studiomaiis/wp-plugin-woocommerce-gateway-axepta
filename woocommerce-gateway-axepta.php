@@ -211,8 +211,6 @@ function woocommerce_axepta_missing_wc_notice() {
 
 
 add_action( 'parse_request', 'woocommerce_axepta_parse_request' );
-
-
 function woocommerce_axepta_parse_request( &$wp ) {
 	if ( isset( $wp->query_vars[ 'pagename' ] ) ) {
 		if ( isset( $wp->query_vars[ 'order-received' ] ) ) {
